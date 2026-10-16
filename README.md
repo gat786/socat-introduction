@@ -48,7 +48,7 @@ Connection: close
 ok
 EOF
 
-socat -v TCP-LISTEN:3333,reuseaddr,fork SYSTEM:'cat response.http'
+socat -v TCP-LISTEN:3000,reuseaddr,fork SYSTEM:'cat response.http'
 ```
 
 Lets try to use it as a client
