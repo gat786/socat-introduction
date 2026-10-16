@@ -1,6 +1,59 @@
-# socat HTTP demo
+# Socat Demo
 
-A tiny FastAPI server for showing what an HTTP request really is: plain text bytes over TCP.
+I wanted to make a video on the basis of all networking on linux. Sockets.
+
+They are used everywhere in each of the protocols that we use and central to how everything connects with each other.
+
+We are going to learn how HTTP works using `Socat`
+
+`Socat` stands for SOcket CAT
+
+- HTTP Request structure
+
+    ![Request](./images/http-request.png)
+
+- HTTP Response structure
+
+    ![Response](./images/http-response.png)
+
+
+what is socat and how does it work
+
+```bash
+socat -d -d STDIN STDOUT
+```
+
+Start a normal server and write to a file
+
+```bash
+socat TCP-LISTEN:3000,reuseaddr,fork CREATE:text-requests.txt
+```
+
+```bash
+socat TCP-LISTEN:3000,reuseaddr,fork STDOUT
+```
+
+Start a normal server and return a response
+
+```bash
+cat <<EOF > response.http
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Length: 3
+Connection: close
+
+ok
+EOF
+
+socat -v TCP-LISTEN:3333,reuseaddr,fork SYSTEM:'cat response.http'
+```
+
+Lets try to use it as a client
+
+
+## socat HTTP client demo
+
+We have a tiny FastAPI server for showing what an HTTP request really is: plain text bytes over TCP.
 
 ## Start the server
 
@@ -16,7 +69,7 @@ uv run server.py          # listens on http://127.0.0.1:8000
 | `/json`    | POST    | Requires `{"name": "...", "message": "..."}`, parses it, and replies with JSON. A missing field gets a `422` |
 | `/inspect` | any     | Shows what the server parsed from your bytes: method, path, query, headers, body |
 
-## 1. Send raw request files
+### 1. Send raw request files
 
 Each file in `requests/` is a complete HTTP request, byte for byte (CRLF line endings, exact `Content-Length`).
 
@@ -30,7 +83,7 @@ socat - TCP:127.0.0.1:8000 < requests/post-json-bad.http   # 422: "message" miss
 socat - TCP:127.0.0.1:8000 < requests/inspect.http
 ```
 
-## 2. Type a request by hand
+### 2. Type a request by hand
 
 ```bash
 socat - TCP:127.0.0.1:8000,crlf
@@ -46,7 +99,7 @@ Host: localhost
 The `crlf` option turns your Enter (`\n`) into `\r\n`, the line ending HTTP requires.
 Try `PUT`, `PATCH`, or `BANANA` (an unknown method gets a `405`).
 
-## 3. Watch what curl or a browser sends
+### 3. Watch what curl or a browser sends
 
 Put socat in front of the server as a logging proxy:
 
@@ -63,7 +116,7 @@ curl -X POST localhost:9000/json -H 'Content-Type: application/json' \
 
 You can also open http://localhost:9000/inspect in a browser to see all the headers it adds.
 
-## 4. An HTTP server with no framework: socat + response.http
+### 4. An HTTP server with no framework: socat + response.http
 
 `socat-server.sh` is one socat command. It answers every request with the raw bytes of `response.http`,
 the mirror image of the request files.
