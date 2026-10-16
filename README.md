@@ -29,10 +29,16 @@ socat -d -d STDIN STDOUT
 Start a normal server and write to a file
 
 ```bash
+# this will terminate the connection asap
+# CREATE is a writeonly process so there is nothing to read and
+# socat will just return empty response
 socat TCP-LISTEN:3000,reuseaddr,fork CREATE:text-requests.txt
 ```
 
 ```bash
+# this will hang because it will wait on terminal for output to send
+# because STDOUT i.e. your terminal is a read+write process and it is trying to
+# read output from your terminal
 socat TCP-LISTEN:3000,reuseaddr,fork STDOUT
 ```
 
