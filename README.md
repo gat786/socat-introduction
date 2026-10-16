@@ -1,12 +1,15 @@
 # Socat Demo
 
-I wanted to make a video on the basis of all networking on linux. Sockets.
+Sockets are the basis of all the networking that happens in our computers, laptops and other digital devices. They are a concept in the linux operating system which allows connectivity to happen across processes and networks and they make the flow of traffic possible.
 
 They are used everywhere in each of the protocols that we use and central to how everything connects with each other.
 
-We are going to learn how HTTP works using `Socat`
+Today we are going to learn how HTTP works using `Socat`
 
 `Socat` stands for SOcket CAT
+
+
+What I mostly wanted to go towards discussing was a typical HTTP packet.
 
 - HTTP Request structure
 
